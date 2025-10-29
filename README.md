@@ -36,3 +36,15 @@ The directory structure follows the traditional data science prototyping structu
 - `data`: all the relevant data in `csv` format 
 - `scripts`: pertinent files for analysis
 - `requirements.txt`: project dependencies
+
+
+## Local Setup
+
+**Note**: Make sure conda is installed on your machine.
+
+Run the following commands to ensure all files work as expected, by replicated our own environment:
+
+```bash
+conda env create -f environment.yml
+conda activate data-ethics
+```
