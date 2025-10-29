@@ -4,7 +4,7 @@ This repository contains the `data` and `scripts` for an investigation on demogr
 
 > Controlling for offense type and time, how do arrest rates differ across NYC precincts with varying racial compositions?
 
-in a lens of ethics, fairness, and bias. This research question is derived from the larger, broader question:
+through a lens of ethics, fairness, and bias. This research question is derived from the larger, broader question:
 
 > Given similar offense types and time periods, do precincts and communities experience different arrest rates? 
 
