@@ -59,7 +59,7 @@ def merge_arrests_acs(
             f"Looked for: {zip_field_candidates}. Found: {list(zcta.columns)}"
         )
 
-    print("📍 Assigning ZIP (ZCTA) to each arrest via spatial join...")
+    print("Assigning ZIP (ZCTA) to each arrest via spatial join...")
     arrests_with_zcta = gpd.sjoin(
         arrests_gdf,
         zcta[[zip_field, "geometry"]],
