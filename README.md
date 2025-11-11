@@ -13,9 +13,7 @@ Ethical Themes:
 - Bias Propagation: How biased data can affect predictive policing models.
 
 
-Hypothesis:
-
-ZIP codes with higher proportions of Black and LatinX residents will show higher arrest intensities, even when controlling for offense type, income, and borough.
+Hypothesis: 
 
 ## Methodology
 
