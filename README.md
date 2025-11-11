@@ -1,53 +1,121 @@
 # Mapping Structural Disparities in NYC Policing
 
-This repository contains the `data` and `scripts` for an investigation on demographic disparities in NYC Arrest data. More specifically, this repository and corresponding report aim at tackling our research question:
+This repository contains the data and code for an empirical investigation of racial and socioeconomic disparities in NYPD arrest patterns.
 
-> “Given comparable offense types and time periods, do ZIP-code areas in New York City with different racial and socioeconomic compositions experience differing arrest intensities?"
+We focus on the question:
 
+> Given comparable time periods, do ZIP Code Tabulation Areas (ZCTAs) in New York City with different racial and socioeconomic compositions experience differing arrest intensities?
 
-Ethical Themes:
+The project situates this empirical question within broader concerns in data ethics, algorithmic fairness, and the risks of bias propagation in data-driven policing.
 
-- Fairness: Are arrests proportionate to community demographics?
-- Responsibility: How should analysts interpret open policing data without reproducing harm?
-- Privacy: Why aggregate at ZIP level instead of individuals or officers?
-- Bias Propagation: How biased data can affect predictive policing models.
+## Ethical Themes
 
+- Fairness  
+  Are arrests proportional to the demographic composition of communities, or are some groups and neighborhoods systematically subject to higher enforcement intensity?
 
-Hypothesis: 
+- Responsibility  
+  How should researchers and practitioners interpret open policing data without naturalizing or amplifying existing harms?
+
+- Privacy  
+  Why use aggregated, area-level data (ZIP/ZCTA) instead of identifying individuals, officers, or exact locations, and how does this choice balance analytic value with protection against re-identification?
+
+- Bias Propagation  
+  How can biased or uneven arrest data, if used uncritically as training data for predictive systems, reproduce and legitimize structural inequalities in policing?
+
+## Hypothesis
+
+We hypothesize that, even after normalizing by population and controlling for basic contextual factors, ZIP codes with higher proportions of Black and Hispanic residents and greater socioeconomic disadvantage will exhibit higher arrest intensities than whiter, wealthier ZIP codes. We further expect these disparities to be large enough to raise concerns about disparate impact and the use of arrest data in predictive policing tools.
 
 ## Methodology
 
-This project examines how police arrest rates differ across New York City precincts with varying racial compositions, while controlling for offense type and time period.
+1. Data sources
+   - NYPD Arrests Data (NYC Open Data), restricted to 2023.
+   - U.S. Census Bureau ACS 2023 5-year estimates at the ZIP Code Tabulation Area (ZCTA) level for:
+     - Total population
+     - Racial and ethnic composition (White, Black, Hispanic/Latino, Asian, American Indian/Alaska Native)
+     - Median household income
+     - Poverty measures
 
-We use public data from **NYC Open Data** and the **U.S. Census**, including NYPD Arrest Data, Complaint Data, and demographic information. 
+2. Geospatial linkage
+   - Each arrest record is geocoded using its latitude and longitude.
+   - Arrest locations are spatially joined to NYC ZIP/ZCTA polygons (GeoJSON).
+   - We retain ZCTAs with sufficient residential population to obtain stable rates.
 
-Our analysis includes:
-- **Exploratory data visualization** to identify disparities across precincts.  
-- **Regression modeling** to test whether precincts with higher proportions of Black or Hispanic residents show higher arrest intensities after accounting for crime rates.  
-- **Geospatial mapping** and an **interactive dashboard** (Streamlit) to display results clearly.
+3. Construction of arrest intensity measures
+   - For each ZCTA, we compute:
+     - Total arrests per 1,000 residents.
+     - Offense severity breakdowns (felony, misdemeanor, violation).
+     - Group-specific arrest intensities where both ACS population counts and arrest counts are available.
+   - We merge these with ACS demographics to obtain a ZIP-level analysis dataset.
 
-## Directory Structure
+4. Exploratory analysis
+   - Descriptive statistics and visualization of arrest intensity across ZIP codes.
+   - Correlation analysis between arrest intensity, racial composition, and socioeconomic indicators.
+   - Examination of how high- and low-intensity ZIP codes differ in demographic and economic profiles.
 
-The directory structure follows the traditional data science prototyping structure. A file tree is shown below for your convenience.
+5. Regression modeling
+   - Ordinary Least Squares (OLS) models with arrest intensity as the outcome and:
+     - Racial composition (percent Black, Hispanic, etc.)
+     - Socioeconomic context (income, poverty)
+     - Population size (log population) as controls.
+   - Poisson regression with total arrests as a count outcome and population as an offset, to model arrest rates directly.
+   - These models assess whether racial and economic disparities in arrest intensity persist after adjusting for basic contextual factors.
 
-```bash
+6. Fairness analysis
+   - Citywide group-specific arrest rates (e.g., Black vs White vs Hispanic) and corresponding rate ratios.
+   - ZIP-level Black-to-White and Hispanic-to-White arrest intensity ratios where denominators are reliable.
+   - Interpretation of these disparities using fairness concepts such as disparate impact and structural bias.
+
+## Repository Contents
+
+```bash 
 ├── data
-│   └── arrests_2023.csv
+│   ├── acs
+│   ├── arrests
+│   ├── geo
+│   ├── merged
+│   └── prev
+├── environment.yml
+├── exploration
+│   ├── chloro.ipynb
+│   ├── explo.ipynb
+│   ├── exploration.ipynb
+│   └── Project_DATA259 (1).ipynb
+├── notebooks
+│   └── analysis_2023.ipynb
 ├── README.md
-├── requirements.txt
 └── scripts
+    ├── acs_data_loader.py
+    └── merge_arrests_acs.py
 ```
 
-- `data`: all the relevant data in `csv` format 
-- `scripts`: pertinent files for analysis
-- `requirements.txt`: project dependencies
+- `data/`  
+  Processed CSV files, including:
+  - Raw NYPD 2023 arrests extract
+  - ACS 2023 ZIP-level demographic data
+  - Merged and cleaned ZIP-level analysis dataset
 
+- `scripts/`  
+  Reproducible steps for:
+  - Downloading and preparing ACS data
+  - Spatially joining arrests to ZCTAs
+  - Constructing arrest intensity and merged datasets
+
+- `notebooks/` 
+  Jupyter notebooks containing:
+  - Exploratory analysis
+  - Regression modeling
+  - Fairness and disparity analysis
+
+- `environment.yml`  
+  Conda environment specification for reproducing the analysis.
 
 ## Local Setup
 
-**Note**: Make sure conda is installed on your machine.
+Prerequisites:
+- Conda (Anaconda or Miniconda)
 
-Run the following commands to ensure all files work as expected, by replicated our own environment:
+Setup:
 
 ```bash
 conda env create -f environment.yml
