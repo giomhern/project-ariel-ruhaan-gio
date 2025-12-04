@@ -8,15 +8,13 @@ author:
 affiliation: "University of Chicago"
 date: today
 format:
-  html:
+  pdf:
     toc: true
     toc-depth: 3
-    code-fold: true
-    theme: cosmo
   pdf:
     documentclass: article
     geometry: margin=1in
-bibliography: references.bib
+# bibliography: references.bib
 ---
 
 # Introduction
