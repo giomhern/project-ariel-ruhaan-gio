@@ -3,8 +3,8 @@ title: "Arrest Intensity in New York City: A Quantitative Analysis of Racial and
 subtitle: "A ZIP-Code–Level Statistical and Spatial Analysis of NYPD Arrest Data (2023)"
 author:
   - name: Giovanni Maya
-  - name: Ruhaan Chopra
   - name: Ariel Alleyne
+  - name: Ruhaan Chopra
 affiliation: "University of Chicago"
 date: today
 format:
@@ -118,21 +118,6 @@ Secondly and equally as notable, higher-income areas exhibit substantially lower
 
 However, this analysis only captures slices of the underlying structure. Due to the multidimensional and highly entangled structure of these relationships, these preliminary findings motivate the use of statistical methods that reinforce initial assumptions. 
 
-
-# Geospatial Analysis
-
-This report presents a series of choropleth maps created by joining 2023 NYPD arrest data with 2023 ACS demographic estimates at the ZCTA level to examine variation in arrest intensity across New York City. Following the description above, arrest counts were standardized as arrests per 1,000 residents so that observed differences across ZIP codes were not driven by population size. Quantile-based binning was also applied, assigning each color to an equal fraction of ZIP codes to minimize distortions caused by outliers and to more accurately represent the full distribution of arrest intensity.
-
-The base arrest-intensity map presents a distinct spatial pattern, rather than random geographic variation. High-arrest ZIP codes cluster in the Bronx, Northern Manhattan, and central and eastern Brooklyn - areas containing some of the city's highest proportions of Black and Hispanic residents. Low-arrest ZIP codes, on the other hand, appear in predominantly White, high-income neighborhoods including the Upper East Side, Battery Park/Tribeca, and sections of Staten Island and Queens. This simple initial visualization suggests that spatial patterns in policing intensity correspond closely to New York City's broader racial and socioeconomic geography.
-
-To place these findings in context and elaborate on them, maps of several of the key demographic variables used in the regression models—percent Black, percent Hispanic, median income, and poverty rate—were created. The racial composition maps reveal intense clustering of Black residents in Southeast Queens, Northern Manhattan, and the Bronx, while Hispanic residents concentrate in Northern Manhattan, the South Bronx, and parts of Brooklyn. The poverty map reveals high poverty rates concentrated in the Bronx and Central Brooklyn. When viewed in conjunction with the arrest-intensity map, these demographic trends reveal significant spatial overlap: neighborhoods with greater Black and Hispanic populations and higher poverty rates correspond to areas of highest arrest intensity. This spatial congruence visually displays the regression results, which show that racial composition remains a strong predictor of arrest intensity even when income and poverty are controlled.
-
-Spatial smoothing was applied as a preprocessing step to overcome noise inherent in ZIP-level data, particularly in areas of low population where per-capita arrest rates can vary quite widely. Smoothing is a diagnostic used to assess whether spatial relationships observed in raw data reflect genuine geographic structure and are not isolated statistical anomalies. Using a Queen contiguity weights matrix, the spatial lag of arrest intensity was calculated; this represents the average arrest rate of each ZIP code and its contiguous neighbors. The result is a smoothed surface that downplays the role of hyperlocal outliers and emphasizes regional clustering. The map produced from this reinforces the presence of broad, continuous hotspots in the Bronx, Northern Manhattan, and Central Brooklyn. The persistence of such patterns beyond smoothing suggests that high arrest intensity is not an artifact of population volatility and ZIP-level noise but rather stable citywide trends embedded in racially segregated neighborhood structures.
-
-To identify areas of unusually high or low levels of policing relative to the city as a whole, arrest intensity was standardized using z-scores. Standardization transforms each ZIP code's arrest rate into the number of standard deviations it lies above or below the citywide mean, and allows for direct comparison across neighborhoods on a common scale. This transformation underscores not just whether arrest intensity is high or low, but whether it is exceptionally high or low relative to normal variation. As the resulting z-score map makes clear, many ZIP codes in the Bronx and Northern Manhattan exceed one standard deviation above the mean, indicating that their arrest intensities are not just elevated but statistically extreme. In contrast, ZIP codes falling more than one standard deviation below the mean - indicating unusually low arrest intensity - are clustered in affluent, majority-White neighborhoods. By framing arrest intensity in terms of deviation from the citywide norm, the z-score analysis underscores the magnitude of spatial inequality in policing, while revealing that the most heavily and least heavily policed neighborhoods occupy opposite ends of New York City's racial and socioeconomic spectrum.
-Additional spatial diagnostics considered clustering algorithms such as SKATER and k-means as a means of determining whether a data-driven grouping of ZIP codes would independently reproduce the spatial patterns observed in the choropleths. These methods yielded only partial results due to irregular ZCTA boundaries, disconnected adjacency structures, and substantial variation in ZIP-code population sizes. Despite these limitations, the clusters which did emerge were broadly consistent with the maps, grouping high-arrest ZIP codes in the Bronx, Northern Manhattan, and Central Brooklyn, and clustering low-arrest ZIP codes in affluent, predominantly White neighborhoods. Although clustering was not fully reliable for this geographic unit, its limited output nonetheless aligned with the patterns identified through smoothing, z-scores, and choropleths, providing additional qualitative support for the overall spatial interpretation.
-Taken together, these geospatial analyses provide clear and intuitive evidence of pronounced geographic and racial disparities in New York City policing outcomes. The spatial patterns are highly consistent with the statistical models, suggesting that racial composition alone strongly predicts arrest intensity even when accounting for controls for income, poverty, population size, and offense type. In this way, the maps support the translation of quantitative findings into a concrete spatial narrative: racialized patterns of policing are part of the city's very geographic and social structure.
-
 # Regression Modeling and Key Quantitative Results
 
 To examine how the characteristics of a neighborhood predict arrest intensity in New York City, a set of OLS models were first estimated using arrests per 1,000 residents as the dependent variable. The analyses were all conducted at the ZIP Code Tabulation Area level, using the cleaned dataset including 151 ZIP codes.
@@ -154,6 +139,72 @@ Taken together, these findings demonstrate that the racial pattern identified in
 
 
 # Unsupervised Machine Learning: K-means Clustering
+
+While the regression models quantify how individual variables (race, income, poverty, population) relate to arrest intensity, they do not directly describe the joint neighborhood patterns that emerge when these factors are reconciled. To capture these neighborhood patterns, we apply unsupervised machine learning, specifically k-mean clustering, to group ZIP codes into interpretable "neighborhood types". 
+
+## Methodology 
+
+We construct a feature matrix using the following standardized variables: arrest intensity (arrests per 1,000 residents), racial composition, and socioeconomic status such as median household income and poverty count / rate. 
+
+![Elbow plot for k-means models with varying number of clusters.](../outputs/k_means_elbow_plot.png){#fig-elbow width="50%"}
+
+To ensure reproducible results and to prevent unusual inflation, each feature was standardized. We then fit k-means for \(k \in \(2, \dots, 9\)\) and inspect the resulting elbow plot (See @fig-elbow). The curve shows a steep improvement in within-cluster fit between \(k=2\) and \(k=4\) with diminishing returns afterwards. On this basis, four clusters were chosen as the primary level of specificity. 
+
+## Neighborhood Profiles
+
+The cluster analysis groups NYC ZIP codes into four distinct neighborhood profiles, each defined by a characteristic combinations of racial composition, income levels, and arrest intensity. Table @tbl-cluster-summary summarizes the cluster-level averages with a discussion of the significance of three notable groups to follow. 
+
+::: center
+| Cluster Label                          | Arrests per 1,000 | % Black | % Hispanic | Median Income | Poverty Count |
+|----------------------------------------|-------------------:|--------:|-----------:|--------------:|--------------:|
+| **Black-Majority / Moderate Arrest**   | 21.64             | 0.59    | 0.17       | $76,513       | 9,450         |
+| **Hispanic-Majority / High Arrest**    | 37.83             | 0.21    | 0.58       | $55,109       | 15,930        |
+| **White-Affluent / Low Arrest**        | 17.91             | 0.06    | 0.19       | $116,869      | 4,005         |
+| **White-Mixed / Moderate Arrest**           | 21.88             | 0.11    | 0.24       | $70,831       | 14,916        |
+
+: Cluster-Level Average Summary Statistics for NYC ZIP Codes
+{#tbl-cluster-summary}
+:::
+
+### Black Majority / Moderate-Arrest Neighborhoods 
+
+
+This cluster is composed of ZIP codes with some the highest proportions of Black residents in the city (59%). Despite median incomes that fall near the city wide midpoint, arrest intensity here remains substantially above low-arrest clusters, averaging 21.6 arrests per 1,000 residents. These neighborhoods are primarily located in Southeast Queens, Northern Manhattan, and sections of Brooklyn (See @fig-cluster-maps). These areas have been historically shaped by residential segregration, disproportionate, and deep disinvestment.
+
+
+### Hispanic Majority / High-Arrest Neighborhoods
+
+The second cluster displays the clearest structure: Hispanic-majority ZIP codes with the highest arrest intensity in the entire dataset, averaging 37.8 arrests per 1,000 residents (See @fig-cluster-maps). 
+
+![Geographic maps that highlight the zip-codes pertaining to each neighborhood profile.](../outputs/k_means_region_cluster.png){#fig-cluster-maps width="67%"}
+
+Among the ZIP codes are neighborhoods concentrated in Upper Manhattan such as Harlem and Washington Heights and the South and Central Bronx. These communities also report the highest poverty levels among the four clusters and the lowest median incomes (<$55,000). This profile represents the most pronounced intersection of racial composition, socioeconomic advantage, and policing intensity. The magnitude of enforcement is nearly double of that in several Black-majority neighborhoods and more than two times that of affluent White areas. 
+
+In structural terms, these ZIP codes form the core of the city's arrest hotspot geograph, further supported by the additional geospatial analysis to follow. 
+
+
+Together, these clusters demonstrate that NYC arrest intensity does not vary randomly across space. Instead, it sorts into distinct racialized geographies, with highest-levels of enforcement overwhelmingly concentrated in Hispanic-majority neighborhoods, followed by Black-majority neighborhoods, and the lowest rates found in affluent White areas. These results prove consistent with our initial assumptions and previous linear regression modeling analyses. 
+
+
+### White-Affluent / Low-Arrest Neighborhoods 
+
+This cluster inclues some of NYC's wealthiest ZIP codes with average median household incomes exceeding $116,000 (See @tbl-cluster-summary, @fig-cluster-maps) and a racial composition that is predominantly White and Asian. These neighborhoods have some of the lowest arrest rates anywhere in the city, averaging 17.9 arrests per 1,000 residents. As expected, these neighborhoods also experience lower average numbers of residents under poverty indicating a multi-dimensional match between socioeconomic factors and racial composition that is structurally embedded within metropolitan communities. 
+
+# Geospatial Analysis
+
+This report presents a series of choropleth maps created by joining 2023 NYPD arrest data with 2023 ACS demographic estimates at the ZCTA level to examine variation in arrest intensity across New York City. Following the description above, arrest counts were standardized as arrests per 1,000 residents so that observed differences across ZIP codes were not driven by population size. Quantile-based binning was also applied, assigning each color to an equal fraction of ZIP codes to minimize distortions caused by outliers and to more accurately represent the full distribution of arrest intensity.
+
+The base arrest-intensity map presents a distinct spatial pattern, rather than random geographic variation (See Figure XX). High-arrest ZIP codes cluster in the Bronx, Northern Manhattan, and central and eastern Brooklyn - areas containing some of the city's highest proportions of Black and Hispanic residents. Low-arrest ZIP codes, on the other hand, appear in predominantly White, high-income neighborhoods including the Upper East Side, Battery Park/Tribeca, and sections of Staten Island and Queens. This simple initial visualization suggests that spatial patterns in policing intensity correspond closely to New York City's broader racial and socioeconomic geography.
+
+To place these findings in context and elaborate on them, maps of several of the key demographic variables used in the regression models—percent Black, percent Hispanic, median income, and poverty rate—were created. The racial composition maps reveal intense clustering of Black residents in Southeast Queens, Northern Manhattan, and the Bronx, while Hispanic residents concentrate in Northern Manhattan, the South Bronx, and parts of Brooklyn. The poverty map reveals high poverty rates concentrated in the Bronx and Central Brooklyn  (See Figure XX). When viewed in conjunction with the arrest-intensity map, these demographic trends reveal significant spatial overlap: neighborhoods with greater Black and Hispanic populations and higher poverty rates correspond to areas of highest arrest intensity. This spatial congruence visually displays the regression results, which show that racial composition remains a strong predictor of arrest intensity even when income and poverty are controlled.
+
+Spatial smoothing was applied as a preprocessing step to overcome noise inherent in ZIP-level data, particularly in areas of low population where per-capita arrest rates can vary quite widely. Smoothing is a diagnostic used to assess whether spatial relationships observed in raw data reflect genuine geographic structure and are not isolated statistical anomalies. Using a Queen contiguity weights matrix, the spatial lag of arrest intensity was calculated; this represents the average arrest rate of each ZIP code and its contiguous neighbors. The result is a smoothed surface that downplays the role of hyperlocal outliers and emphasizes regional clustering. The map produced from this reinforces the presence of broad, continuous hotspots in the Bronx, Northern Manhattan, and Central Brooklyn. The persistence of such patterns beyond smoothing suggests that high arrest intensity is not an artifact of population volatility and ZIP-level noise but rather stable citywide trends embedded in racially segregated neighborhood structures.
+
+To identify areas of unusually high or low levels of policing relative to the city as a whole, arrest intensity was standardized using z-scores. Standardization transforms each ZIP code's arrest rate into the number of standard deviations it lies above or below the citywide mean, and allows for direct comparison across neighborhoods on a common scale. This transformation underscores not just whether arrest intensity is high or low, but whether it is exceptionally high or low relative to normal variation. As the resulting z-score map makes clear, many ZIP codes in the Bronx and Northern Manhattan exceed one standard deviation above the mean, indicating that their arrest intensities are not just elevated but statistically extreme. In contrast, ZIP codes falling more than one standard deviation below the mean - indicating unusually low arrest intensity - are clustered in affluent, majority-White neighborhoods. By framing arrest intensity in terms of deviation from the citywide norm, the z-score analysis underscores the magnitude of spatial inequality in policing, while revealing that the most heavily and least heavily policed neighborhoods occupy opposite ends of New York City's racial and socioeconomic spectrum.
+
+<!-- Additional spatial diagnostics considered clustering algorithms such as SKATER and k-means as a means of determining whether a data-driven grouping of ZIP codes would independently reproduce the spatial patterns observed in the choropleths. These methods yielded only partial results due to irregular ZCTA boundaries, disconnected adjacency structures, and substantial variation in ZIP-code population sizes. Despite these limitations, the clusters which did emerge were broadly consistent with the maps, grouping high-arrest ZIP codes in the Bronx, Northern Manhattan, and Central Brooklyn, and clustering low-arrest ZIP codes in affluent, predominantly White neighborhoods. Although clustering was not fully reliable for this geographic unit, its limited output nonetheless aligned with the patterns identified through smoothing, z-scores, and choropleths, providing additional qualitative support for the overall spatial interpretation. -->
+
+Taken together, these geospatial analyses provide clear and intuitive evidence of pronounced geographic and racial disparities in New York City policing outcomes. The spatial patterns are highly consistent with the statistical models, suggesting that racial composition alone strongly predicts arrest intensity even when accounting for controls for income, poverty, population size, and offense type. In this way, the maps support the translation of quantitative findings into a concrete spatial narrative: racialized patterns of policing are part of the city's very geographic and social structure.
 
 # Interpretation: Insights into Structural Bias from the Results
 
