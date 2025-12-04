@@ -1,0 +1,86 @@
+---
+title: "Arrest Intensity in New York City: A Quantitative Analysis of Racial and Socioeconomic Disparities"
+subtitle: "A ZIP-Code–Level Statistical and Spatial Analysis of NYPD Arrest Data (2023)"
+author: "Ariel Alleyne, Giovanni Maya, Ruhaan Chopra"
+format:
+  pdf:
+    pdf-engine: xelatex
+    toc: true
+    number-sections: true
+    mainfont: "Charter"
+    fontsize: 11pt
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1in
+      - right=1in
+    df-print: tibble
+    code-block-bg: "#f8f8f8"
+    code-block-border-left: "#888888"
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+# Exploratory Data Analysis
+
+Our analysis begins by merging NYPD's 2023 arrest data with American Community Survey's 5-year demographic estimates at the ZIP Code Tabulation Area (ZCTA) level. This exploratory phase provides a descriptive grounding for the modeling and fairness analysis in the consequent sections. 
+
+## Citywide Arrest Patterns 
+
+Across the 151 in-scope ZIP codes, NYPD recorded 189,260 arrests in 2023 for a total population of 8.18 million. Among this population, the citywide average arrest rate was approximately 23.14 arrests per 1,000 residents. 
+
+Breaking this down by racial categories, there are significant disparities. Black residents experienced approximately 87,590 arrests across a reported population of 1.72M and Hispanic residents experienced 69,365 arrests across a reported population of 2.36M. In contrast, out of a population of 2.52M, White residents experienced a drastically lower 18,601 arrests in 2023. Even prior to statistical modeling, these aggregrates may suggest that Black and Hispanic populations experience substantially higher policing exposure than their population shares relative to racial categories that have not been historically marginalized. 
+
+## High-Arrest and Low-Arrest Neighborhoods 
+
+A closer examination Zip Code-level arrest intensities revealed substantial heterogeneity across New York City. Even after normalizing by population, various extremes highlight how unevenly policing exposure is distributed across the city's neighborhoods. 
+
+::: center
+| ZCTA | Arrests per 1,000 | % Black | % Hispanic | % White | % Asian | Median Income |
+|------|-------------------|---------|------------|---------|---------|----------------|
+| **10013** | 90.59 | 3% | 8% | 53% | 31% | $159,474 |
+| **10035** | 81.19 | 35% | 42% | 14% | 6% | $40,556 |
+| **10451** | 75.20 | 40% | 51% | 6% | 1% | $37,111 |
+| **10301** | 70.96 | 23% | 29% | 37% | 7% | $84,937 |
+| **10454** | 70.08 | 23% | 70% | 3% | 0% | $27,500 |
+: Highest-Arrest ZIP Codes in New York City (Top 5)
+{#tbl-high-arrest}
+:::
+
+The five ZIP codes with the highest rest intensities, along with the percentage of the demographic composition of that region. Most of these zipcodes fall in historically disadvantaged areas: the South Bronx (10451, 10454), East Harlem (10035), and parts of Staten Island’s North Shore (10301). 3 out of the 5 zip codes shown above demonstrate high proportions of Black and Hispanic residents. This correlated relationship (though not causal) may suggest uneven policing in these areas. 
+
+A main anomaly is ZIP 10013 (Tribeca/SoHo), which combines a small residential base with heavy commercial, nightlife, commuter, and tourist activity. Its arrest intensity likely reflects enforcement directed at public activity in high-traffic areas rather than policing of resident populations.
+
+
+::: center
+| ZCTA | Arrests per 1,000 | % Black | % Hispanic | % White | % Asian | Median Income |
+|------|-------------------|---------|------------|---------|---------|----------------|
+| **11040** | 0.61 | 0.01 | 0.11 | 0.39 | 0.44 | $153,511 |
+| **11001** | 1.17 | 0.06 | 0.15 | 0.51 | 0.24 | $144,755 |
+| **10128** | 2.95 | 0.05 | 0.13 | 0.67 | 0.10 | $148,705 |
+| **10075** | 3.02 | 0.01 | 0.05 | 0.79 | 0.10 | $146,556 |
+| **11364** | 3.13 | 0.02 | 0.15 | 0.29 | 0.50 | $101,222 |
+: Lowest-Arrest ZIP Codes in New York City (Top 5)
+{#tbl-low-arrest}
+:::
+
+On the converse, the lowest-arrest ZIP codes in New York City form a clear and distinct group: they are among the wealthiest, least-policed neighborhoods in the city. Median household incomes in these areas range from roughly $100k to $158k and represent a highly skewed racial composition. These ZIP cocdes are predominantly White and Asian with very small Black and Hispanic populations (often below 5%). Arrest intensities in these neighborhoods are extraordinarily low ranging from 0.6 to 3.6 arrests per 1,000 residents; a metric that is substantially lower than the citywide mean of roughly 23 arrests per 1,000. 
+
+Furthermore, these ZIP codes also share similar built-in environment characteristics by being considered as suburban-like. These areas have had stable residential patterns and historically receive lower levels of proative policing, reflecting actual differences in crime reporting environments and engraved geographical inequities. 
+
+The dichotomy of the low-arrest and high-arrest geographical zones sets the stage for further analyses that suggest that arrest intensity is not simply randomly distributed across space, but rather, clings on predictable demographic and socioeconomic divides. 
+
+## Demographic Correlates of Arrest Intensity
+
+The correlation analysis conducted provides a compact summary of how arrest intensity relates to the demographic and socioeconomic composition of New York City zip codes. 
+
+![Correlation matrix of arrest, demographic, and socioeconomic variables.](../outputs/corr_matrix.png){#fig-corr width="90%"}
+
+Firstly, arrest intensity correlates strongly with Hispanic population share and poverty. Arrest rate per 1,000 residents shows a positive correlation with the percent of Hispanic residents (+0.32) and poverty (+0.24), indicating that ZIP codes with larger Hispanic populations may tend to experience higher arrest rates. 
+
+Secondly and equally as notable, higher-income areas exhibit substantially lower arrest intensity. Median income is negatively correlated with arrest rate (-0.24), confirming geographic inequalitys where neighborhoods with higher incomes and lower socioeconomic precarity see significantly less policing exposure. 
+
+However, this analysis only captures slices of the underlying structure. Due to the multidimensional and highly entangled structure of these relationships, these preliminary findings motivate the use of statistical methods that reinforce initial assumptions. 
