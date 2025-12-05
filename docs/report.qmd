@@ -29,6 +29,7 @@ execute:
 ---
 
 # Introduction
+
 In New York City, policing generates an extensive administrative record of complaints and arrests that increasingly feeds into statistical models and algorithmic tools. These data are often treated as neutral indicators of crime and public safety, suitable for use in predictive-policing systems, performance dashboards, and resource-allocation decisions. Yet if arrest patterns themselves are shaped by racialized enforcement, then relying on arrests as “objective” measures risks reproducing and amplifying existing biases rather than simply reflecting underlying harm.
 This paper asks: What are the racial composition, income, and poverty predictors of arrest intensity in New York City, controlling for population size and offense type? We pursue two sub-questions. First, do socioeconomic differences in income and poverty explain racial disparities in arrest rates, or do racial effects persist even after conditioning on these factors? Second, how do the spatial distributions of arrest intensity and complaint intensity align or diverge, and what do these similarities or discrepancies reveal about potential over-policing?
 These questions arise as national debates about police bias frequently focus on singular incidents, while broader spatial patterns of enforcement receive less attention. If the intensity of arrest is disproportionately high in specific racialized areas, then arrest counts cannot be treated as dispassionate indicators of crime. Instead, using them directly in algorithmic systems risks hard-coding structural bias into tools that guide future policing and policy.
@@ -231,4 +232,15 @@ These effects extend immediately to the world of data and algorithms. Arrest dat
 
 In order to address the disparity of arrest practices occurring along racial lines, it is necessary to go beyond the boundaries of subtle shifts in officer behavior and algorithmic calibration. In fact, it is necessary to rethink the entire architecture of policing as an institution—the organizational and allocation priorities that map and focus the power of the state onto certain communities. As long as such an architecture remains, the data point for arrest—and the algorithms that are derived from it—is doomed to represent and replicate the racialized geography that already exists. All three communities—the people who make policy, the enforcement bodies, and the data analysts—are implicated here. This begins with the allocation of resources, the allocation of surveillance, and the processing of complaints, and, most importantly, the data that are labeled as the “objective” inputs into the process. The data discussed here suggest that it is necessary to address such issues, as opposed to viewing them as matters that are incidental to the process of policing.
 
+
+# Sources
+Gelman, A., Fagan, J., & Kiss, A. (2007). An analysis of the New York City Police Department's "stop-and-frisk" policy in the context of claims of racial bias. Journal of the American Statistical Association, 102(479), 813-823.
+
+Lum, K., & Isaac, W. (2016). To predict and serve? Significance, 13(5), 14-19.
+
+City of New York Police Department. (2024). NYPD arrest data (historic) [Data set]. NYC Open Data. https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Historic/8h9b-rp9u 
+
+United States Census Bureau. (2024). American Community Survey 2018–2022 5-year estimates [Data Set]. https://www.census.gov/data/developers/data-sets/acs-5year.html 
+
+United States Census Bureau. (2023). ZIP Code Tabulation Areas (ZCTAs) [Shapefile]. https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html
 
