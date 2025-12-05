@@ -258,7 +258,20 @@ The convergence of these different analyses indicates that the observed racial d
 These findings are deeply significant for the use of predictive policing and algorithm-driven allocation of resources. Arrest records are commonly regarded as an objective proxy for crime risk and are utilized to develop algorithm-driven tools that help the allocation of police patrols. But if arrest intensity already reflects the presence of structural bias, as evidenced by the reflection of traditional patterns of enforcement and not crime prevalence, then arrest records cannot constitute an unbiased data component. They contain the inequalities that they are designed to quantify.
 As machine learning algorithms are trained and fed such data, they automatically learn that Black and Hispanic communities are labeled as “high-risk” regardless of crime rates. This fuels a feedback cycle where high levels of policing in some communities generate an increase in arrest records, which are then taken as indicators of high risk by prediction algorithms, thus leading to an even greater presence of the police. The algorithm here is not predicting crime but learning the past distribution of levels of the police presence. This feedback cycle carries deeply troubling implications for the ethics of data and policy. Quantifiable indicators cannot be satisfactorily distinguished from the administrative processes that produce them. Should the underlying data indicate disparate enforcement, the use of algorithmic software may thus actually exacerbate, rather than alleviate, the existing inequities—in short, by automating and validating the patterns of over-policing already identified by the empirically based research.
 
-<!-- # Limitations of Work -->
+# Limitations of Work
+
+## Arrest Data Reflect Enforcement, Not Crime
+
+A central limitation of this study is that arrest data measure the behavior of the police, not the underlying level of unlawful activity in a neighborhood. Arrest intensity therefore reflects patterns of enforcement rather than serving as a neutral indicator of crime prevalence. This distinction is especially important in racialized and economically marginalized areas where historical patterns of over-policing may inflate arrest counts independently of underlying wrongdoing. For this reason, the results cannot be interpreted as demonstrating that communities with higher arrest intensity have higher rates of criminal behavior, but instead speak directly to enforcement practices and the structural conditions shaping them.
+
+## ZIP Codes Are Imperfect Proxies for Neighborhoods
+
+Another limitation arises from the use of ZIP Code Tabulation Areas as the primary geographic unit of analysis. ZCTAs are administrative constructs designed for mail delivery, not for capturing socially or economically meaningful neighborhood boundaries. They vary widely in physical size and population, can combine multiple distinct communities, and often fail to align with police precinct boundaries. As a result, some spatial patterns may be artifacts of the geographic unit itself rather than true reflections of community-level dynamics.
+
+## Multicollinearity Between Race and Socioeconomic Variables 
+
+A further methodological limitation stems from strong multicollinearity among racial composition, poverty levels, and median income in New York City. As mentioned earlier in the paper, these variables are deeply intertwined due to long-standing patterns of segregration and economic stratification. Though it does not directly bias coefficient estimates in our analysis, the overlapping nature of these predictors reduces the precision of causal interpretation. 
+
 
 # Conclusion
 
